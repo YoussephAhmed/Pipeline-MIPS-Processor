@@ -248,7 +248,7 @@ module testALU;
 initial
 begin
 $monitor($time, "  R1=%d , R2=%d,control=%d, Result=%d, zeroFlag=%d, overflow=%d",
-               data1,data2,control_signals,result,zero,overflow);
+               data1,data2,control_signals,sh_am,result,zero,overflow);
 
 #1 data1 = 1; data2 = 3; control_signals = 0; // and
 #2 data1 = 1; data2 = 3; control_signals = 1; // or
@@ -268,12 +268,28 @@ endmodule
 // <</////////////////////////// ALU /////////////////////////////
 
 // >>////////////////////////// MUX 2*1 //////////////////////////
-module mux_2x1 #(parameter DATA_WIDTH = 32) (ip0, ip1, sel, out);
-
-input [DATA_WIDTH-1:0] ip1;
-input [DATA_WIDTH-1:0] ip0;
+module mux_2x1_5(ip0, ip1, sel, out);
 input sel;
-output reg [DATA_WIDTH-1:0] out;
+input [4:0] ip1;
+input [4:0] ip0;
+output reg [4:0] out;
+
+always@(*) begin
+  if (sel==1'b1) begin
+   out = ip1;
+  end 
+  else begin 
+   out = ip0;
+  end
+end
+
+endmodule
+
+module mux_2x1_32(ip0, ip1, sel, out);
+input sel;
+input [31:0] ip1;
+input [31:0] ip0;
+output reg [31:0] out;
 
 always@(*) begin
   if (sel==1'b1) begin
@@ -361,7 +377,7 @@ assign bcond = (opcode == `BEQ) || (opcode == `BNE);
 
 always@ (*) begin
   casex({opcode,funct})
-    {6'd0 ,`ADD},{`ADDI,6'dx},
+     {`Rf ,`ADD},{`ADDI,6'dx},
      {`LW  ,6'dx},
      {`SW  ,6'dx} : alu_ctrl = 4'd0;
     {6'd0 ,`AND},{`ANDI,6'dx} : alu_ctrl = 4'd1;
@@ -500,7 +516,7 @@ wire [31:0] read_data1;
 wire [31:0] read_data2;
 wire [4:0]  write_back_address;
 wire [31:0] write_back_data;
-mux_2x1 mux1(Inst_20_16 , Inst_15_11 ,RegDest,write_back_address);
+mux_2x1_5 mux1(Inst_20_16 , Inst_15_11 ,RegDest,write_back_address);
 regFile Reg1(Inst_25_21,Inst_20_16 ,write_back_address,write_back_data,RegWrite,clk,read_data1,read_data2);
 
 
@@ -508,20 +524,37 @@ regFile Reg1(Inst_25_21,Inst_20_16 ,write_back_address,write_back_data,RegWrite,
 //ALU
 wire [31:0]sign_extended;
 wire [31:0] ALU_Result;
+wire [31:0] ALU_2operand;
 wire zeroflag;
 wire overflow;
 
-signext signex1(Inst_15_11,sign_extended);
-mux_2x1 mux2(read_data2,sign_extend,ALUSrc,ALU_2operand);
-ALU alu1(read_data1,ALU_2operand,ALU_Control,zero,overflow,ALU_Result);
+signext signex1(Inst_15_0,sign_extended);
+mux_2x1_32 mux2(read_data2,sign_extended,ALUSrc,ALU_2operand);
+ALU alu1(read_data1,ALU_2operand,ALU_Control,shamt,zero,overflow,ALU_Result);
 
 
 //MEM
 wire [31:0] Mem_out;
 wire [31:0] Inst_15_0_signext; 
 dataMem datamem1(ALU_Result,read_data2,MemWrite,MemRead,clk,Mem_out);
+mux_2x1_32 mux3(ALU_Result,Mem_out,MemtoReg,write_back_data);
 
-// .. TO BE CONTINOUED
+//beq , bneq
+wire [31:0]pseudo_address;
+wire [31:0]pseudo_address_plus_4;
+wire [31:0] branch_address;
+and(eq_branch,zeroflag,bcond);
+and(neq_branch,!zeroflag,bcond);
+or(takebranch,eq_branch,neq_branch);
+sh_by2 shift1(sign_extended,pseudo_address);
+adder adder1(pseudo_address, 4, pseudo_address_plus_4);
+mux_2x1_32 mux4(pc_plus_4,branch_address,takebranch,branch_address);
+
+//jump
+wire [31:0] jump_address;
+wire [5:0] six_zeros = 0; 
+sh_by2 shift2({ six_zeros ,Inst_25_0 },jump_address);
+mux_2x1_32 mux5(branch_address,jump_address,jcond,pc_input);
 
 endmodule
 
