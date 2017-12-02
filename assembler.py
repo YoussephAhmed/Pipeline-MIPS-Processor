@@ -20,6 +20,16 @@ def funcChecker(string):
     elif(string == 'or'):
         funct = '100101'
     return funct
+#بتعرف النوع واضح من الاسم بردو
+def FormatIdentefier(string):
+    #list = listMaker(string)
+    if (string == 'add' or string == 'sub' or string == 'and' or string == 'sll' or string == 'or' or string == 'jr' ):
+        format = 'R-format'
+    elif (string == 'addi' or string == 'lw' or string == 'andi' or string == 'sw' or string == 'ori' or string == 'beq' or string == 'bne'):
+        format = 'I-format'
+    elif (string == 'j' or string == 'jal'):
+        format = 'J-format'
+    return format
 
 #واضح فشخ انها بترجع كود الريجيستر
 def RegisterIdentifier(string):
@@ -142,25 +152,11 @@ def Jformat(string):
     imm = y.replace(" ","0")
     machineCode = op+imm
     return machineCode
-#بتعرف النوع واضح من الاسم بردو
-def FormatIdentefier(string):
-    #list = listMaker(string)
-    if (string == 'add' or string == 'sub' or string == 'and' or string == 'sll' or string == 'or'):
-        format = 'R-format'
-    elif (string == 'addi' or string == 'lw' or string == 'andi' or string == 'sw' or string == 'ori' or string == 'beq' or string == 'bne'):
-        format = 'I-format'
-    elif (string == 'j' or string == 'jal'):
-        format = 'J-format'
-    return format
-
-
-#الماين الجميله
-def main():
-
+#--------------------------------------------------------------------------------------#
+def assembler():
     input = open('input.txt','r')
     instuctions = input.readlines()
     output = open('output.txt','w')
-
     i = 0
     while(i < len(instuctions)):
         elementlist =  listMaker(instuctions[i])
@@ -174,21 +170,6 @@ def main():
         output.write(machineCode+'\n')
         i= i+1
 
-    print("Done..")
+  
 
-
-    # d = Rformat('add  $s1,$s2,$s3')
-    # h = Rformat('sll  $t1,$s2,(4)')
-    # a = Iformat('addi  $t1,$s2,4')
-    # b = Iformat('lw  $t1,18($t5)')
-    # c = Iformat('beq  $t1,$s2,32')
-    # m = Jformat('j 30')
-    # n = Jformat('jal 30')
-    # print(d)
-    # print(h)
-    # print(a)
-    # print(b)
-    # print(c)
-    # print(m)
-    # print(n)
 if __name__ == "__main__": main()

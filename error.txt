@@ -1,0 +1,9 @@
+
+error:: unidentified operation "ad" in "ad $s1 , $s2 , $s3
+"
+
+error::wrong sw expression in "sw  $t0, 0 ($t1
+"
+
+error::wrong lw expression in "lw $s0, 8 ($t1
+"
