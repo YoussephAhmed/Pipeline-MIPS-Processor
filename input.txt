@@ -1,19 +1,5 @@
-add $s1 , $s2 , $s3
-sub $s1 , $s2 , $s3
-and $s1 , $s2 , $s3
-or $s1 , $s2 , $s3
-bne $s7 , $s7 ,10
-sll $t2, $s0, 4
-sw  $t0, 0 ($t1)
-lw $s0, -8 ($t1)
-sll $t2, $s0, 4
-add $s1 , $s2 , $s3
-sub $s1 , $s2 , $s3
-beq $s7 , $s7 , 6
-and $s1 , $s2 , $s3
-or $s1 , $s2 , $s3
-sll $t2, $s0, 4
-sw  $t0, 0 ($t1)
-lw $s0, -8 ($t1)
-sll $t2, $s0, 4
-j 0
+addi $s0 , $s1 , 2	
+addi $s2 , $s0 , 3	
+sw $s2 , 0 ($s4)	
+lw $s4 , 0 ($s4)	
+beq  $s5 , $s5 , -3

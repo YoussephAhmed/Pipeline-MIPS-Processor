@@ -1,8 +1,23 @@
 
+def listMaker(string):
+    x = string.replace("("," ")
+    y = x.replace(")"," ")
+    z = y.replace(","," ")
+    result = z.split()
+    return result
 
+def FormatIdentefier(string):
+    #list = listMaker(string)
+    if (string == 'add' or string == 'sub' or string == 'and' or string == 'sll' or string == 'or' or string == 'jr' ):
+        format = 'R-format'
+    elif (string == 'addi' or string == 'lw' or string == 'andi' or string == 'sw' or string == 'ori' or string == 'beq' or string == 'bne'):
+        format = 'I-format'
+    elif (string == 'j' or string == 'jal'):
+        format = 'J-format'
+    return format
 
 def Operation_Checker(string):
-    state = 'compiled succssisful..you are ready to Go'
+    state = 'compiled successfully..you are ready to Go'
     instuctionslist =  listMaker(string)
     op = instuctionslist[0]
     if(op == 'add' or op == 'sub' or op == 'and' or op == 'sll' or op == 'or'):
@@ -12,7 +27,7 @@ def Operation_Checker(string):
     elif(op == 'j' or op == 'jal'):
        pass
     else:
-        state = 'error:: unidentified operation "{}" in "{}"'.format(op,string)
+        state = 'error:: unidentified operation "{}" in :{}'.format(op,string)
     return(state)
 
 
@@ -21,7 +36,7 @@ def Operation_Checker(string):
 
 
 def RegisterName_Checker(string):
-    state = 'compiled succssisful..you are ready to Go'
+    state = 'compiled successfully..you are ready to Go'
     error_exp = ''
     instuctionslist =  listMaker(string)
     op = instuctionslist[0]
@@ -37,7 +52,7 @@ def RegisterName_Checker(string):
         elif(dis == '$at'or dis == '$v0' or dis == '$v1'):
             pass
         else:
-            error_exp = error_exp+'error::unidentified register name "{}" in "{}" \n'.format(dis,string)
+            error_exp = error_exp+'error::unidentified register name "{}" in :{} \n'.format(dis,string)
 
 
 
@@ -48,7 +63,7 @@ def RegisterName_Checker(string):
         elif(first == '$at'or first == '$v0' or first == '$v1'):
             pass
         else:
-            error_exp = error_exp+'error::unidentified register name "{}" in "{}" \n'.format(first,string)
+            error_exp = error_exp+'error::unidentified register name "{}" in :{} \n'.format(first,string)
 
 
         if(second.isdecimal()):
@@ -61,7 +76,7 @@ def RegisterName_Checker(string):
             elif(second == '$at'or second == '$v0' or second == '$v1'):
                 pass
             else:
-                error_exp = error_exp+'error::unidentified register name "{}" in "{}" \n'.format(second,string)
+                error_exp = error_exp+'error::unidentified register name "{}" in :{} \n'.format(second,string)
 
     elif(Format == 'I-format'):
         if(instuctionslist[0] == 'addi' or instuctionslist[0] == 'andi' or instuctionslist[0] == 'ori'):
@@ -81,7 +96,7 @@ def RegisterName_Checker(string):
         elif(dis == '$at'or dis == '$v0' or dis == '$v1'):
             pass
         else:
-            error_exp = error_exp+'error::unidentified register name "{}" in "{}" \n'.format(dis,string)
+            error_exp = error_exp+'error::unidentified register name "{}" in :{} \n'.format(dis,string)
 
 
 
@@ -93,7 +108,7 @@ def RegisterName_Checker(string):
         elif(first == '$at'or first == '$v0' or first == '$v1'):
             pass
         else:
-            error_exp = error_exp+'error::unidentified register name "{}" in "{}" \n'.format(first, string)
+            error_exp = error_exp+'error::unidentified register name "{}" in :{} \n'.format(first, string)
 
     if(error_exp != ''):
             state = error_exp
@@ -101,7 +116,7 @@ def RegisterName_Checker(string):
 
 
 def colon_Checker(string):
-    state = 'compiled succssisful..you are ready to Go'
+    state = 'compiled successfully..you are ready to Go'
     counter = 0
     for i in string:
         if(i == ','):
@@ -120,11 +135,11 @@ def colon_Checker(string):
     elif(Format == 'J-format' and counter == 0 and (op == 'j' or op == 'jal')):
        pass
     else:
-        state = 'error::unexpected "," in "{}"'.format(string)
+        state = 'error::unexpected "," in :{}'.format(string)
     return(state)
 
 def dollarSign_Checker(string):
-    state = 'compiled succssisful..you are ready to Go'
+    state = 'compiled successfully..you are ready to Go'
     counter = 0
     for i in string:
         if(i == '$'):
@@ -145,11 +160,11 @@ def dollarSign_Checker(string):
     elif(Format == 'J-format' and counter == 0 and (op == 'j' or op == 'jal')):
        pass
     else:
-        state = 'error::unexpected "$" in "{}"'.format(string)
+        state = 'error::unexpected "$" in :{}'.format(string)
     return(state)
 
 def Prasec_Checker(string):
-    state = 'compiled succssisful..you are ready to Go'
+    state = 'compiled successfully..you are ready to Go'
     counter = 0
     for i in string:
         if(i == '(' or i == ')'):
@@ -161,13 +176,13 @@ def Prasec_Checker(string):
         pass
 
     else:
-        state = 'error::wrong {} expression in "{}"'.format(op ,string)
+        state = 'error::wrong {} expression in: {}'.format(op ,string)
     return(state)
 
 
 
 def instruction_stucture(string):
-    state = 'compiled succssisful..you are ready to Go'
+    state = 'compiled successfully..you are ready to Go'
     instuctionslist =  listMaker(string)
     op = instuctionslist[0]
     Format =  FormatIdentefier(op)
@@ -182,7 +197,7 @@ def instruction_stucture(string):
 def error_checker(string):
     instuctionslist =  listMaker(string)
     op = instuctionslist[0]
-    state = 'compiled succssisful..you are ready to Go'
+    state = 'compiled successfully..you are ready to Go'
     error_exp = ''
     m = Operation_Checker(string)
     if (m == state):
@@ -218,7 +233,7 @@ def error_handler():
         input = open('input.txt','r')
         instuctions = input.readlines()
         error = open('error.txt','w')
-        state = 'compiled succssisful..you are ready to Go'
+        state = 'compiled successfully..you are ready to Go'
         flag = 0
         i = 0
         while(i < len(instuctions)):
@@ -229,3 +244,6 @@ def error_handler():
             i= i+1
         if (flag == 0):
             error.write(result+'\n')
+
+
+if __name__ == "__main__": main()
